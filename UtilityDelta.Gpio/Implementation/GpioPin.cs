@@ -1,10 +1,11 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using UtilityDelta.Gpio.Enums;
 using UtilityDelta.Gpio.Interfaces;
 
 namespace UtilityDelta.Gpio.Implementation
 {
-    public class GpioPin : IGpioPin
+    public class GpioPin : IGpioPin, IDisposable
     {
         private const string UnExportPath = "/sys/class/gpio/unexport";
         private const string ExportPath = "/sys/class/gpio/export";

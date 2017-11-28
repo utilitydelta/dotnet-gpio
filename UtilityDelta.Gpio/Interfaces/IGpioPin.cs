@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace UtilityDelta.Gpio.Interfaces
+﻿namespace UtilityDelta.Gpio.Interfaces
 {
-    public interface IGpioPin : IDisposable
+    public interface IGpioPin
     {
         bool PinValue { get; set; }
     }

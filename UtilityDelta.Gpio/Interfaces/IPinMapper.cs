@@ -2,6 +2,6 @@
 {
     public interface IPinMapper
     {
-        int MapPinToSysfs(int pin);
+        int MapPinToSysfs(string pin);
     }
 }

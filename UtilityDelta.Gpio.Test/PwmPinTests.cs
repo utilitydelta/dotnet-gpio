@@ -1,5 +1,4 @@
-﻿using System;
-using Moq;
+﻿using Moq;
 using UtilityDelta.Gpio.Implementation;
 using UtilityDelta.Gpio.Interfaces;
 using Xunit;
@@ -13,11 +12,13 @@ namespace UtilityDelta.Gpio.Test
         {
             var fileIo = new Mock<IFileIo>();
             var pinMapper = new Mock<IPinMapper>();
-            var service = new PinController(fileIo.Object, pinMapper.Object);
-            var pin = service.GetPwmPin(20);
-            pin.Dispose();
+            using (var service = new PinController(fileIo.Object, pinMapper.Object))
+            {
+                var pin = service.GetPwmPin("20");
+                Assert.NotNull(pin);
+            }
 
-            pinMapper.Verify(x => x.MapPinToSysfs(20), Times.Once);
+            pinMapper.Verify(x => x.MapPinToSysfs("20"), Times.Once);
             fileIo.Verify(x => x.WriteAllText(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             fileIo.Verify(x => x.ReadAllText(It.IsAny<string>()), Times.Never);
         }
@@ -27,12 +28,13 @@ namespace UtilityDelta.Gpio.Test
         {
             var fileIo = new Mock<IFileIo>();
             var pinMapper = new Mock<IPinMapper>();
-            pinMapper.Setup(x => x.MapPinToSysfs(20)).Returns(43);
-            pinMapper.Setup(x => x.MapPinToSysfs(23)).Returns(44);
-            var service = new PinController(fileIo.Object, pinMapper.Object);
-            using (var pin1 = service.GetPwmPin(20))
-            using (var pin2 = service.GetPwmPin(23))
+            pinMapper.Setup(x => x.MapPinToSysfs("20")).Returns(43);
+            pinMapper.Setup(x => x.MapPinToSysfs("23")).Returns(44);
+            using (var service = new PinController(fileIo.Object, pinMapper.Object))
             {
+                var pin1 = service.GetPwmPin("20");
+                var pin2 = service.GetPwmPin("23");
+
                 pin1.DutyCycle = 33;
                 pin1.Period = 55;
                 pin1.Polarity = 99;
@@ -46,8 +48,8 @@ namespace UtilityDelta.Gpio.Test
                 pin2.Enabled = false;
             }
 
-            pinMapper.Verify(x => x.MapPinToSysfs(20), Times.Once);
-            pinMapper.Verify(x => x.MapPinToSysfs(23), Times.Once);
+            pinMapper.Verify(x => x.MapPinToSysfs("20"), Times.Once);
+            pinMapper.Verify(x => x.MapPinToSysfs("23"), Times.Once);
 
             fileIo.Verify(x => x.WriteAllText("/sys/class/pwm/pwmchip0/export", "43"), Times.Once);
             fileIo.Verify(x => x.WriteAllText("/sys/class/pwm/pwmchip0/export", "44"), Times.Once);
@@ -79,12 +81,14 @@ namespace UtilityDelta.Gpio.Test
             fileIo.Setup(x => x.ReadAllText("/sys/class/pwm/pwmchip0/pwm43/enable")).Returns("1");
 
             var pinMapper = new Mock<IPinMapper>();
-            pinMapper.Setup(x => x.MapPinToSysfs(20)).Returns(43);
-            pinMapper.Setup(x => x.MapPinToSysfs(23)).Returns(44);
-            var service = new PinController(fileIo.Object, pinMapper.Object);
-            using (var pin1 = service.GetPwmPin(20))
-            using (var pin2 = service.GetPwmPin(23))
+            pinMapper.Setup(x => x.MapPinToSysfs("20")).Returns(43);
+            pinMapper.Setup(x => x.MapPinToSysfs("23")).Returns(44);
+            
+            using (var service = new PinController(fileIo.Object, pinMapper.Object))
             {
+                var pin1 = service.GetPwmPin("20");
+                var pin2 = service.GetPwmPin("23");
+
                 Assert.Equal(pin1.Polarity, 33);
                 Assert.Equal(pin1.Polarity, 33);
                 Assert.Equal(pin1.DutyCycle, 39);

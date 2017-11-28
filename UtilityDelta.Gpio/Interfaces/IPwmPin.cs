@@ -1,12 +1,9 @@
-﻿using System;
-
-namespace UtilityDelta.Gpio.Interfaces
+﻿namespace UtilityDelta.Gpio.Interfaces
 {
-    /// <inheritdoc />
     /// <summary>
     ///     https://www.kernel.org/doc/Documentation/pwm.txt
     /// </summary>
-    public interface IPwmPin : IDisposable
+    public interface IPwmPin
     {
         /// <summary>
         ///     The total period of the PWM signal (read/write).

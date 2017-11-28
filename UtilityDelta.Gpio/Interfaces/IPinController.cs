@@ -1,8 +1,10 @@
-﻿namespace UtilityDelta.Gpio.Interfaces
+﻿using System;
+
+namespace UtilityDelta.Gpio.Interfaces
 {
-    public interface IPinController
+    public interface IPinController : IDisposable
     {
-        IPwmPin GetPwmPin(int pin);
-        IGpioPin GetGpioPin(int pin);
+        IPwmPin GetPwmPin(string pin);
+        IGpioPin GetGpioPin(string pin);
     }
 }

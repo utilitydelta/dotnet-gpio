@@ -4,7 +4,7 @@ using UtilityDelta.Gpio.Interfaces;
 
 namespace UtilityDelta.Gpio.Implementation
 {
-    public class PwmPin : IPwmPin
+    public class PwmPin : IPwmPin, IDisposable
     {
         private const string UnExportPath = "/sys/class/pwm/pwmchip0/unexport";
         private const string ExportPath = "/sys/class/pwm/pwmchip0/export";
