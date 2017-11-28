@@ -46,6 +46,11 @@ namespace UtilityDelta.Gpio.Test
                 pin2.Polarity = 101;
                 pin2.Enabled = true;
                 pin2.Enabled = false;
+
+                //Test caching pwm
+                pin1 = service.GetPwmPin("20");
+                pin1.DutyCycle = 393;
+
             }
 
             pinMapper.Verify(x => x.MapPinToSysfs("20"), Times.Once);
@@ -58,6 +63,7 @@ namespace UtilityDelta.Gpio.Test
             fileIo.Verify(x => x.WriteAllText("/sys/class/pwm/pwmchip0/pwm44/polarity", "101"), Times.Once);
 
             fileIo.Verify(x => x.WriteAllText("/sys/class/pwm/pwmchip0/pwm43/duty_cycle", "33"), Times.Once);
+            fileIo.Verify(x => x.WriteAllText("/sys/class/pwm/pwmchip0/pwm43/duty_cycle", "393"), Times.Once);
             fileIo.Verify(x => x.WriteAllText("/sys/class/pwm/pwmchip0/pwm44/duty_cycle", "36"), Times.Once);
 
             fileIo.Verify(x => x.WriteAllText("/sys/class/pwm/pwmchip0/pwm43/period", "55"), Times.Once);

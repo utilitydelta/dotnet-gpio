@@ -128,8 +128,12 @@ namespace UtilityDelta.Gpio.Test
                 var value = pin.PinValue;
                 Assert.False(value);
                 pin.PinValue = true;
+
+                //Test gpio caching
+                pin = service.GetGpioPin("99");
             }
 
+            pinMapper.Verify(x => x.MapPinToSysfs("99"), Times.Once);
             fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/export", "43"), Times.Once);
             fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/unexport", "43"), Times.Once);
         }
