@@ -6,8 +6,8 @@ namespace UtilityDelta.Gpio.Implementation
     public class PinController : IPinController
     {
         private readonly IFileIo _fileIo;
-        private readonly IPinMapper _pinMapper;
         private readonly Dictionary<string, GpioPin> _gpioDict = new Dictionary<string, GpioPin>();
+        private readonly IPinMapper _pinMapper;
         private readonly Dictionary<string, PwmPin> _pwmDict = new Dictionary<string, PwmPin>();
 
         public PinController(IFileIo fileIo, IPinMapper pinMapper)

@@ -10,6 +10,9 @@ namespace UtilityDelta.Gpio.Implementation
             File.WriteAllText(path, contents);
         }
 
-        public string ReadAllText(string path) => File.ReadAllText(path);
+        public string ReadAllText(string path)
+        {
+            return File.ReadAllText(path);
+        }
     }
 }

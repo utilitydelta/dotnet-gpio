@@ -4,9 +4,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>Tyson Brown</Authors>
     <Company />
-    <Product>GPIO / PWM API for devices</Product>
+    <Product></Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>3.0.0</Version>
+    <Version>4.0.0</Version>
     <Description>.NET Standard library for working with GPIO on Linux devices</Description>
     <PackageProjectUrl>https://github.com/utilitydelta/dotnet-gpio</PackageProjectUrl>
   </PropertyGroup>

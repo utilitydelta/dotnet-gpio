@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using UtilityDelta.Gpio.Enums;
 using UtilityDelta.Gpio.Interfaces;
 
 namespace UtilityDelta.Gpio.Implementation
@@ -14,13 +15,13 @@ namespace UtilityDelta.Gpio.Implementation
         private const string DutyCyclePath = "/sys/class/pwm/pwmchip0/pwm{0}/duty_cycle";
         private const string PinOn = "1";
         private const string PinOff = "0";
+        private const string PolarityNormal = "normal";
+        private const string PolarityInversed = "inversed";
         private readonly string _dutyCyclePinPath;
         private readonly string _enablePinPath;
         private readonly IFileIo _fileIo;
         private readonly string _periodPinPath;
-
         private readonly string _polarityPinPath;
-
         private readonly string _sysfsPinNumber;
         private bool _exported;
 
@@ -49,10 +50,20 @@ namespace UtilityDelta.Gpio.Implementation
             set => SetInt(value, _periodPinPath);
         }
 
-        public int Polarity
+        public PwmPolarity Polarity
         {
-            get => GetInt(_polarityPinPath);
-            set => SetInt(value, _polarityPinPath);
+            get
+            {
+                ExportPinIfRequired();
+                return _fileIo.ReadAllText(_polarityPinPath) == PolarityInversed
+                    ? PwmPolarity.Inversed
+                    : PwmPolarity.Normal;
+            }
+            set
+            {
+                ExportPinIfRequired();
+                _fileIo.WriteAllText(_polarityPinPath, value == PwmPolarity.Normal ? PolarityNormal : PolarityInversed);
+            }
         }
 
         public int DutyCycle

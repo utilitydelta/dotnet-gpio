@@ -1,4 +1,6 @@
-﻿namespace UtilityDelta.Gpio.Interfaces
+﻿using UtilityDelta.Gpio.Enums;
+
+namespace UtilityDelta.Gpio.Interfaces
 {
     /// <summary>
     ///     https://www.kernel.org/doc/Documentation/pwm.txt
@@ -18,7 +20,7 @@
         ///     the polarity. The polarity can only be changed if the PWM is not
         ///     enabled. Value is the string "normal" or "inversed".
         /// </summary>
-        int Polarity { get; set; }
+        PwmPolarity Polarity { get; set; }
 
         /// <summary>
         ///     The active time of the PWM signal (read/write).

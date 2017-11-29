@@ -8,64 +8,44 @@ namespace UtilityDelta.Gpio.Test
     public class GpioPinTests
     {
         [Fact]
-        public void TestLazyExport()
+        public void DontNeedToUnExport()
         {
             var fileIo = new Mock<IFileIo>();
-            var pinMapper = new Mock<IPinMapper>();
-            var service = new PinController(fileIo.Object, pinMapper.Object);
-            var pin = service.GetGpioPin("20");
-            Assert.NotNull(pin);
-
-            pinMapper.Verify(x => x.MapPinToSysfs("20"), Times.Once);
-            fileIo.Verify(x => x.WriteAllText(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-            fileIo.Verify(x => x.ReadAllText(It.IsAny<string>()), Times.Never);
-        }
-
-        [Fact]
-        public void TestSetValue()
-        {
-            var fileIo = new Mock<IFileIo>();
-            var pinMapper = new Mock<IPinMapper>();
-            pinMapper.Setup(x => x.MapPinToSysfs("21")).Returns(33);
-            var service = new PinController(fileIo.Object, pinMapper.Object);
-            var pin = service.GetGpioPin("21");
-            pin.PinValue = true;
-            pin.PinValue = false;
-            pin.PinValue = true;
-
-            pinMapper.Verify(x => x.MapPinToSysfs("21"), Times.Once);
-            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/export", "33"), Times.Once);
-            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/gpio33/direction", "out"), Times.Once);
-            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/gpio33/direction", "in"), Times.Never);
-            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/gpio33/value", "1"), Times.Exactly(2));
-            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/gpio33/value", "0"), Times.Exactly(1));
-            fileIo.Verify(x => x.ReadAllText(It.IsAny<string>()), Times.Never);
-        }
-
-        [Fact]
-        public void TestGettingValue()
-        {
-            var fileIo = new Mock<IFileIo>();
-            fileIo.Setup(x => x.ReadAllText("/sys/class/gpio/gpio43/value")).Returns("1");
+            fileIo.Setup(x => x.ReadAllText("/sys/class/gpio/gpio43/value")).Returns("0");
             var pinMapper = new Mock<IPinMapper>();
             pinMapper.Setup(x => x.MapPinToSysfs("99")).Returns(43);
-            var service = new PinController(fileIo.Object, pinMapper.Object);
-            var pin = service.GetGpioPin("99");
-            var value = pin.PinValue;
-            Assert.True(value);
-            value = pin.PinValue;
-            Assert.True(value);
-            value = pin.PinValue;
+            using (var service = new PinController(fileIo.Object, pinMapper.Object))
+            {
+                service.GetGpioPin("99");
+            }
 
-            Assert.True(value);
+            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/export", "43"), Times.Never);
+            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/unexport", "43"), Times.Never);
+            fileIo.Verify(x => x.WriteAllText(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public void NeedToUnExport()
+        {
+            var fileIo = new Mock<IFileIo>();
+            fileIo.Setup(x => x.ReadAllText("/sys/class/gpio/gpio43/value")).Returns("0");
+            var pinMapper = new Mock<IPinMapper>();
+            pinMapper.Setup(x => x.MapPinToSysfs("99")).Returns(43);
+
+            using (var service = new PinController(fileIo.Object, pinMapper.Object))
+            {
+                var pin = service.GetGpioPin("99");
+                var value = pin.PinValue;
+                Assert.False(value);
+                pin.PinValue = true;
+
+                //Test gpio caching
+                pin = service.GetGpioPin("99");
+            }
 
             pinMapper.Verify(x => x.MapPinToSysfs("99"), Times.Once);
             fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/export", "43"), Times.Once);
-            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/gpio43/direction", "out"), Times.Never);
-            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/gpio43/direction", "in"), Times.Once);
-            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/gpio43/value", "1"), Times.Exactly(0));
-            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/gpio43/value", "0"), Times.Exactly(0));
-            fileIo.Verify(x => x.ReadAllText("/sys/class/gpio/gpio43/value"), Times.Exactly(3));
+            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/unexport", "43"), Times.Once);
         }
 
         [Fact]
@@ -98,44 +78,64 @@ namespace UtilityDelta.Gpio.Test
         }
 
         [Fact]
-        public void DontNeedToUnExport()
+        public void TestGettingValue()
         {
             var fileIo = new Mock<IFileIo>();
-            fileIo.Setup(x => x.ReadAllText("/sys/class/gpio/gpio43/value")).Returns("0");
+            fileIo.Setup(x => x.ReadAllText("/sys/class/gpio/gpio43/value")).Returns("1");
             var pinMapper = new Mock<IPinMapper>();
             pinMapper.Setup(x => x.MapPinToSysfs("99")).Returns(43);
-            using (var service = new PinController(fileIo.Object, pinMapper.Object))
-            {
-                service.GetGpioPin("99");
-            }
+            var service = new PinController(fileIo.Object, pinMapper.Object);
+            var pin = service.GetGpioPin("99");
+            var value = pin.PinValue;
+            Assert.True(value);
+            value = pin.PinValue;
+            Assert.True(value);
+            value = pin.PinValue;
 
-            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/export", "43"), Times.Never);
-            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/unexport", "43"), Times.Never);
-            fileIo.Verify(x => x.WriteAllText(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-        }
-
-        [Fact]
-        public void NeedToUnExport()
-        {
-            var fileIo = new Mock<IFileIo>();
-            fileIo.Setup(x => x.ReadAllText("/sys/class/gpio/gpio43/value")).Returns("0");
-            var pinMapper = new Mock<IPinMapper>();
-            pinMapper.Setup(x => x.MapPinToSysfs("99")).Returns(43);
-            
-            using (var service = new PinController(fileIo.Object, pinMapper.Object))
-            {
-                var pin = service.GetGpioPin("99");
-                var value = pin.PinValue;
-                Assert.False(value);
-                pin.PinValue = true;
-
-                //Test gpio caching
-                pin = service.GetGpioPin("99");
-            }
+            Assert.True(value);
 
             pinMapper.Verify(x => x.MapPinToSysfs("99"), Times.Once);
             fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/export", "43"), Times.Once);
-            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/unexport", "43"), Times.Once);
+            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/gpio43/direction", "out"), Times.Never);
+            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/gpio43/direction", "in"), Times.Once);
+            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/gpio43/value", "1"), Times.Exactly(0));
+            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/gpio43/value", "0"), Times.Exactly(0));
+            fileIo.Verify(x => x.ReadAllText("/sys/class/gpio/gpio43/value"), Times.Exactly(3));
+        }
+
+        [Fact]
+        public void TestLazyExport()
+        {
+            var fileIo = new Mock<IFileIo>();
+            var pinMapper = new Mock<IPinMapper>();
+            var service = new PinController(fileIo.Object, pinMapper.Object);
+            var pin = service.GetGpioPin("20");
+            Assert.NotNull(pin);
+
+            pinMapper.Verify(x => x.MapPinToSysfs("20"), Times.Once);
+            fileIo.Verify(x => x.WriteAllText(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+            fileIo.Verify(x => x.ReadAllText(It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public void TestSetValue()
+        {
+            var fileIo = new Mock<IFileIo>();
+            var pinMapper = new Mock<IPinMapper>();
+            pinMapper.Setup(x => x.MapPinToSysfs("21")).Returns(33);
+            var service = new PinController(fileIo.Object, pinMapper.Object);
+            var pin = service.GetGpioPin("21");
+            pin.PinValue = true;
+            pin.PinValue = false;
+            pin.PinValue = true;
+
+            pinMapper.Verify(x => x.MapPinToSysfs("21"), Times.Once);
+            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/export", "33"), Times.Once);
+            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/gpio33/direction", "out"), Times.Once);
+            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/gpio33/direction", "in"), Times.Never);
+            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/gpio33/value", "1"), Times.Exactly(2));
+            fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/gpio33/value", "0"), Times.Exactly(1));
+            fileIo.Verify(x => x.ReadAllText(It.IsAny<string>()), Times.Never);
         }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using UtilityDelta.Gpio.Implementation;
+﻿using UtilityDelta.Gpio.Implementation;
 using Xunit;
 
 namespace UtilityDelta.Gpio.Test
