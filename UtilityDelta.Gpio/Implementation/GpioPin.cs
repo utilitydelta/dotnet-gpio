@@ -12,6 +12,7 @@ namespace UtilityDelta.Gpio.Implementation
         private const string DirectionPath = "/sys/class/gpio/gpio{0}/direction";
         private const string ValuePath = "/sys/class/gpio/gpio{0}/value";
 
+        private const char PinOnChar = '1';
         private const string PinOn = "1";
         private const string PinOff = "0";
 
@@ -42,7 +43,7 @@ namespace UtilityDelta.Gpio.Implementation
             get
             {
                 SetDirection(GpioDirection.In);
-                return _fileIo.ReadAllText(_valuePinPath) == PinOn;
+                return _fileIo.ReadAllText(_valuePinPath)[0] == PinOnChar;
             }
             set
             {
