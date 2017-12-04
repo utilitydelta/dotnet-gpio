@@ -6,13 +6,13 @@
     <Company>UtilityDelta</Company>
     <Product></Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>4.1.0</Version>
+    <Version>4.2.0</Version>
     <Description>.NET Standard library for working with GPIO on Linux devices</Description>
-    <PackageProjectUrl>https://github.com/utilitydelta/dotnet-gpio</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/utilitydelta-io/dotnet-gpio</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <PackageLicenseUrl>https://github.com/utilitydelta/dotnet-gpio/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageIconUrl>https://github.com/utilitydelta/dotnet-gpio/raw/master/UtilityDelta.Gpio/icons8-led-diode-40.png</PackageIconUrl>
-    <RepositoryUrl />
+    <PackageLicenseUrl>https://github.com/utilitydelta-io/dotnet-gpio/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageIconUrl>https://github.com/utilitydelta-io/dotnet-gpio/raw/master/UtilityDelta.Gpio/icons8-led-diode-40.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/utilitydelta-io/dotnet-gpio</RepositoryUrl>
     <Copyright>Tyson Brown</Copyright>
   </PropertyGroup>
 
