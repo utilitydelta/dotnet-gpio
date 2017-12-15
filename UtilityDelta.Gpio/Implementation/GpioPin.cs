@@ -42,7 +42,10 @@ namespace UtilityDelta.Gpio.Implementation
         {
             get
             {
-                SetDirection(GpioDirection.In);
+                if (!_direction.HasValue)
+                {
+                    SetDirection(GpioDirection.In);
+                }
                 return _fileIo.ReadAllText(_valuePinPath)[0] == PinOnChar;
             }
             set

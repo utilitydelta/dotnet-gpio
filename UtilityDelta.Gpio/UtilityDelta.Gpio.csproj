@@ -6,7 +6,7 @@
     <Company>UtilityDelta</Company>
     <Product></Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>4.2.0</Version>
+    <Version>4.3.0</Version>
     <Description>.NET Standard library for working with GPIO on Linux devices</Description>
     <PackageProjectUrl>https://github.com/utilitydelta-io/dotnet-gpio</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
