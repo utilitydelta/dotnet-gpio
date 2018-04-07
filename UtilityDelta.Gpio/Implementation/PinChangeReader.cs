@@ -56,6 +56,8 @@ namespace UtilityDelta.Gpio.Implementation
         public void Dispose()
         {
             Stop();
+            _valueChangedFileSystemWatcher.Dispose();
+            _directionChangedFileSystemWatcher.Dispose();
         }
     }
 }
