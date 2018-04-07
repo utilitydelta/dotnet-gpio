@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using UtilityDelta.Gpio.Enums;
+using UtilityDelta.Gpio.EventArgs;
 using UtilityDelta.Gpio.Interfaces;
 
 namespace UtilityDelta.Gpio.Implementation
@@ -54,6 +55,10 @@ namespace UtilityDelta.Gpio.Implementation
                 _fileIo.WriteAllText(_valuePinPath, value ? PinOn : PinOff);
             }
         }
+
+        public string GetValuePath() => _valuePinPath;
+
+        public string GetDirectionPath() => _directionPinPath;
 
         private void SetDirection(GpioDirection gpioDirection)
         {

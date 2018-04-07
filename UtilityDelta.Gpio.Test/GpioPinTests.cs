@@ -137,5 +137,27 @@ namespace UtilityDelta.Gpio.Test
             fileIo.Verify(x => x.WriteAllText("/sys/class/gpio/gpio33/value", "0"), Times.Exactly(1));
             fileIo.Verify(x => x.ReadAllText(It.IsAny<string>()), Times.Never);
         }
+
+        [Fact]
+        public void TestGetValuePath()
+        {
+            var fileIo = new Mock<IFileIo>();
+            var pinMapper = new Mock<IPinMapper>();
+            pinMapper.Setup(x => x.MapPinToSysfs("21")).Returns(33);
+            var service = new PinController(fileIo.Object, pinMapper.Object);
+            var pin = service.GetGpioPin("21");
+            Assert.Equal("/sys/class/gpio/gpio33/value", pin.GetValuePath());
+        }
+
+        [Fact]
+        public void TestGetDirectionPath()
+        {
+            var fileIo = new Mock<IFileIo>();
+            var pinMapper = new Mock<IPinMapper>();
+            pinMapper.Setup(x => x.MapPinToSysfs("21")).Returns(33);
+            var service = new PinController(fileIo.Object, pinMapper.Object);
+            var pin = service.GetGpioPin("21");
+            Assert.Equal("/sys/class/gpio/gpio33/direction", pin.GetDirectionPath());
+        }
     }
 }
