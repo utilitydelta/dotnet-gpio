@@ -36,7 +36,8 @@ namespace UtilityDelta.Gpio.Implementation
 
         private void Watch(FileSystemWatcher fileSystemWatcher, string filePath)
         {
-            fileSystemWatcher.Path = filePath;
+            fileSystemWatcher.Path = Path.GetDirectoryName(filePath);
+            fileSystemWatcher.Filter = Path.GetFileName(filePath);
             fileSystemWatcher.Changed += OnGpioValueChanged;
             fileSystemWatcher.EnableRaisingEvents = true;
         }
@@ -45,6 +46,7 @@ namespace UtilityDelta.Gpio.Implementation
         {
             fileSystemWatcher.EnableRaisingEvents = false;
             fileSystemWatcher.Changed -= OnGpioValueChanged;
+            fileSystemWatcher.Filter = null;
             fileSystemWatcher.Path = null;
         }
 
